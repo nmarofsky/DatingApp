@@ -19,17 +19,34 @@ namespace API.Data
             this.mapper = mapper;
             this.context = context;
         }
-
-        public async Task<IEnumerable<AppUser>> GetUsersAsync()
+        public async Task<MemberDto> GetMemberAsync(string username)
         {
             return await this.context.Users
-            .Include(p => p.Photos)
-            .ToListAsync();
+                .Where(x => x.UserName == username)
+                .ProjectTo<MemberDto>(this.mapper.ConfigurationProvider)
+                .SingleOrDefaultAsync();
+        }
+         public async Task<IEnumerable<MemberDto>> GetMembersAsync()
+        {
+            return await this.context.Users.ProjectTo<MemberDto>(this.mapper.ConfigurationProvider).ToListAsync();
         }
 
         public async Task<AppUser> GetUserByIdAsync(int id)
         {
             return await this.context.Users.FindAsync(id);
+        }
+
+        public async Task<AppUser> GetUserByUsernameAsync(string username)
+        {
+            return await this.context.Users
+                .Include(p => p.Photos)
+                .SingleOrDefaultAsync(x => x.UserName == username);
+        }
+        public async Task<IEnumerable<AppUser>> GetUsersAsync()
+        {
+            return await this.context.Users
+            .Include(p => p.Photos)
+            .ToListAsync();
         }
 
         public async Task<bool> SaveAllAsync()
@@ -40,26 +57,6 @@ namespace API.Data
         public void Update(AppUser user)
         {
             this.context.Entry(user).State = EntityState.Modified;
-        }
-
-        public async Task<AppUser> GetUserByUsername(string username)
-        {
-            return await this.context.Users
-            .Include(p => p.Photos)
-            .SingleOrDefaultAsync(x => x.UserName == username);
-        }
-
-        public async Task<IEnumerable<MemberDto>> GetMembersAsync()
-        {
-            return await this.context.Users.ProjectTo<MemberDto>(this.mapper.ConfigurationProvider).ToListAsync();
-        }
-
-        public async Task<MemberDto> GetMemberAsync(string username)
-        {
-            return await this.context.Users
-                .Where(x => x.UserName == username)
-                .ProjectTo<MemberDto>(this.mapper.ConfigurationProvider)
-                .SingleOrDefaultAsync();
         }
     }
 }
