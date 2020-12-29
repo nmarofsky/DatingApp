@@ -4,6 +4,8 @@ namespace API.Extensions
 {
     public static class DateTimeExtensions
     {
+        internal static DateTime Now;
+
         public static int CalculateAge(this DateTime dob)
         {
             var today = DateTime.Today;
