@@ -29,6 +29,7 @@ namespace API.Controllers
             this.userRepository = userRepository;
         }
         // Lists Users in database Asynchronously
+        [Authorize(Roles = "Member")]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<MemberDto>>> GetUsers([FromQuery]UserParams userParams)
         {
@@ -46,6 +47,7 @@ namespace API.Controllers
             return Ok(users);
         }
         // Lists Specific User in database
+        [Authorize(Roles = "Member")]
         [HttpGet("{username}")]
         public async Task<ActionResult<MemberDto>> GetUser(string username)
         {
