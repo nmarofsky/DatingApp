@@ -47,10 +47,11 @@ namespace API.Controllers
         }
         // Lists Specific User in database
         [Authorize(Roles = "Member")]
-        [HttpGet("{username}")]
+        [HttpGet("{username}", Name = "GetUser")]
         public async Task<ActionResult<MemberDto>> GetUser(string username)
         {
-            return await this.unitOfWork.UserRepository.GetMemberAsync(username);
+            var currentUsername = User.GetUsername();
+            return await this.unitOfWork.UserRepository.GetMemberAsync(username, isCurrentUser: currentUsername == username);
         }
 
         [HttpPut]
@@ -67,7 +68,7 @@ namespace API.Controllers
             return BadRequest("Failed to update user");
         }
 
-        [HttpPost("add-photo", Name = "GetUser")]
+        [HttpPost("add-photo")]
         public async Task<ActionResult<PhotoDto>> AddPhoto(IFormFile file)
         {
             var user = await this.unitOfWork.UserRepository.GetUserByUsernameAsync(User.GetUsername());
@@ -81,11 +82,6 @@ namespace API.Controllers
                 Url = result.SecureUrl.AbsoluteUri,
                 PublicId = result.PublicId
             };
-
-            if (user.Photos.Count == 0)
-            {
-                photo.IsMain = true;
-            }
 
             user.Photos.Add(photo);
 
