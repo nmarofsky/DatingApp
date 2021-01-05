@@ -18,3 +18,13 @@
 .rounded-circle {
   max-height: 50px;
 }
+
+::-webkit-scrollbar {
+  width: 6px;
+  overflow-y: scroll;
+}
+
+::-webkit-scrollbar-thumb {
+  background: orangered;
+  border-radius: 20px;
+}
